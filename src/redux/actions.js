@@ -18,10 +18,9 @@ import {
     type: SET_ITEMS,
     payload: {
       items,
-      categories
+      categories,
     }
   });
-  
   export const selectItem = selectedItem => ({
     type: SET_ITEM,
     payload: {
@@ -32,7 +31,7 @@ import {
   export const setCategories = categories => ({
     type: SET_CATEGORIES,
     payload: {
-      categories
+      categories,
     }
   });
   

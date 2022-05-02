@@ -10,7 +10,8 @@ class ItemList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: false
+      isLoading: false,
+      breadcrumb: ""
     };
   }
 
@@ -36,12 +37,41 @@ class ItemList extends Component {
       let { search } = this.props;
       const response = await fetch(`${API_URL}/api/items?q=${search}`);
       let data = await response.json();
-      await this.props.setItems(data);
+      // most repeated category
+      const categories_id = [];
+      data.items.forEach((item) => {
+        categories_id.push({
+          "category": item.category_id
+        })
+      });
+      let category_id = 0;
+      let couenter = 0;
+      let count = 0;
+      categories_id.map(p => {
+        count = 0
+        categories_id.map(x => {
+            if (p === x) { count++ }
+        })
+        if (count > couenter) {
+            couenter = count;
+            category_id = p;
+        }
+      });
+      //Get most repeat category
+      const categories = await fetch(
+        `${API_URL}/api/categories/${category_id.category}`
+      );
       this.setState({ isLoading: false });
+      let breadcrumb = await categories.json();
+      data.categories = breadcrumb.category;
+      await this.props.setItems(data);
+      await this.props.setCategories(breadcrumb.category);
+
     } catch (error) {
       console.log(error);
     }
   }
+
 
   render() {
     const items = this.props.items.length
@@ -63,7 +93,7 @@ class ItemList extends Component {
     }
 
     if (items.length) {
-      return <ul>{items.slice(0, 4)}</ul>;
+      return <ul data-testid="listSearch">{items.slice(0, 4)}</ul>;
     } else {
       let msg = this.props.noItems
         ? "No se encontraron resultados"
@@ -78,8 +108,8 @@ class ItemList extends Component {
 }
 
 export default connect(
-  ({ items, search, noItems }) => {
-    return { items, search };
+  ({ items, search, noItems, categories }) => {
+    return { items, search, categories };
   },
   { setItems, setSearch }
 )(ItemList);

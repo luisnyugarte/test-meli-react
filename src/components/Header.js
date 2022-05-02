@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-// import logo from "./assets/Logo_ML.png";
 import logo from "../assets/Logo_ML.png";
 import { withRouter, Link } from "react-router-dom";
 import { setSearch, setItems } from "../redux/actions";
@@ -31,7 +30,7 @@ class Header extends Component {
     return (
       <header>
         <nav>
-          <form className="search-form" onSubmit={this.searchItems}>
+          <form className="search-form" onSubmit={this.searchItems} data-testid="boxSearch">
             <Link to="/">
               <img src={logo} alt="MercadoLibre" />
             </Link>
@@ -42,8 +41,9 @@ class Header extends Component {
               className="search-input"
               value={this.state.searchField}
               onChange={this.handleChange}
+              data-testid="input"
             />
-            <button type="submit" className="search-button"></button>
+            <button type="submit" className="search-button" data-testid="button"></button>
           </form>
         </nav>
       </header>

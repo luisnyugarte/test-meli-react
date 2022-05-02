@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { API_URL } from "../constants";
 import Loader from "react-loader-spinner";
-import { clearItems, clearSearch, setCategories } from "../redux/actions";
+import { clearItems, clearSearch } from "../redux/actions";
 import "../styles/itemDetail.scss";
 
 class ItemDetail extends Component {
@@ -13,6 +13,7 @@ class ItemDetail extends Component {
       item: {}
     };
   }
+  
 
   async componentDidMount() {
     try {
@@ -26,14 +27,11 @@ class ItemDetail extends Component {
         const response = await fetch(`${API_URL}/api/items/${itemId}`);
         let item = await response.json();
         await this.setState({ item });
-
-        if (!this.props.categories.length) {
-          const categories = await fetch(
-            `${API_URL}/api/categories/${item.item.category_id}`
-          );
-          let breadcrumb = await categories.json();
-          await this.props.setCategories(breadcrumb);
-        }
+        const categories = await fetch(
+          `${API_URL}/api/categories/${item.item.category_id}`
+        );
+        let breadcrumb = await categories.json();
+        await this.props.setCategories(breadcrumb.category);
       }
     } catch (error) {
       console.log(error);
@@ -94,6 +92,6 @@ export default withRouter(
     ({ selectedItem, categories }) => {
       return { selectedItem, categories };
     },
-    { clearItems, clearSearch, setCategories }
+    { clearItems, clearSearch }
   )(ItemDetail)
 );

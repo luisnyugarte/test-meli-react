@@ -20,7 +20,6 @@ app.use(cors());
           })
         }
       });
-      debugger;
       // Find items
       const items = [];
       body.results.forEach((item) => {
@@ -34,23 +33,35 @@ app.use(cors());
             },
             "picture": item.thumbnail,
             "condition" : item.condition,
-            "free-shipping": item.shipping.free_shipping
+            "free-shipping": item.shipping.free_shipping,
+            "category_id": item.category_id,
         });
       });
-      // Send filters (this point is necesary for build the breadcrumb)
-      const breadcrumb = [];
-      body.filters.forEach((item) => {
-        breadcrumb.push(item.values[0].name)
-      })
+
         return res.send({
             "autor": {
                 "name": "Luisny",
                 "lastname": "Ugarte"
             },
-            "breadcrumb": breadcrumb,
             "categories": categories,
             "items": items
         });
+    });
+  });
+
+  // Category
+  app.get('/api/categories/:id', (req, res) => {
+    var categoryParam = req.params.id || '';
+    fetch(`https://api.mercadolibre.com/categories/${categoryParam}`)
+    .then(res => res.json())
+    .then(item => {
+      return res.send({
+        "autor": {
+            "name": "Luisny",
+            "lastname": "Ugarte"
+        },
+        "category": item.name,
+      });
     });
   });
 
@@ -63,29 +74,29 @@ app.use(cors());
       fetch(`https://api.mercadolibre.com/items/${itemParam}/description`)
       .then(res => res.json())
       .then(description => {
-        return res.send({
-          "autor": {
-              "name": "Luisny",
-              "lastname": "Ugarte"
-          },
-          "item": {
-            "id": body.id,
-            "title": body.title,
-            "price": {
-              "currency": body.currency_id,
-              "amount": body.price,
-              "decimals": Number((body.price + "").split(".")[1]) || '',
+          return res.send({
+            "autor": {
+                "name": "Luisny",
+                "lastname": "Ugarte"
             },
-            "category_id":body.category_id,
-            "picture": body.thumbnail,
-            "condition" : body.condition,
-            "free-shipping": body.shipping.free_shipping,
-            "sold_quantity": body.sold_quantity,
-            "description": description.plain_text
-          },
+            "item": {
+              "id": body.id,
+              "title": body.title,
+              "category_id": body.category_id,
+              "price": {
+                "currency": body.currency_id,
+                "amount": body.price,
+                "decimals": Number((body.price + "").split(".")[1]) || '',
+              },
+              "picture": body.thumbnail,
+              "condition" : body.condition,
+              "free-shipping": body.shipping.free_shipping,
+              "sold_quantity": body.sold_quantity,
+              "description": description.plain_text
+            },
+          });
+        });
       });
-      });
-    });
 
   });
   

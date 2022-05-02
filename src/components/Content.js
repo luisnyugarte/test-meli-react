@@ -4,14 +4,15 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 class Content extends Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
-    const categories = this.props.categories.map((category, index) => {
-      return <li key={index}>{category}</li>;
-    });
-
     return (
       <main>
-          <ul className="list-breadcrumb">{categories}</ul>
+          <ul className="list-breadcrumb">
+            <li>{this.props.categories}</li>
+          </ul>
           <div className="list-container">{this.props.children}</div>
       </main>
     );
